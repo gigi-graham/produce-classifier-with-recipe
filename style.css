@@ -14,3 +14,24 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+html, body, [data-testid="stAppViewContainer"] {
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+}
+
+/* Soft translucent overlay to reduce wallpaper intensity */
+[data-testid="stAppViewContainer"]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(191, 227, 180, 0.41);
+    pointer-events: none;
+    z-index: 0;
+}
+
+[data-testid="stHeader"], .st-emotion-cache-18ni7ap {
+    background-color: rgba(255, 255, 255, 0.0) !important;
+}

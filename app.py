@@ -9,13 +9,14 @@ import requests
 import re
 from thefuzz import process
 import torch.nn.functional as F
+import base64
 
 # Page Configuration
 st.set_page_config(
     page_title="Recipe Finder",
     page_icon="🍓",
     layout="wide",
-    initial_sidebar_state="expanded"
+    #initial_sidebar_state="expanded"
 )
 
 # Constants and Mappings
@@ -122,20 +123,46 @@ def fetch_recipes(ingredient):
 # UI Logic
 local_css("style.css")
 
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
+img_base64 = get_base64_image("wallpaper.png")
+
+st.markdown(f"""
+    <style>
+    .stApp {{
+        background-image: url("data:image/jpg;base64,{img_base64}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+
 class_names = load_class_names()
 model = load_model(len(class_names))
 valid_api_ingredients = get_all_ingredients()
 
-with st.sidebar:
-    st.image("https://www.themealdb.com/images/logo-small.png")
-    st.title("Recipe Finder")
-    st.markdown("Upload an image of a fruit, vegetable, or nut, and we'll find recipes for it!")
-    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
+st.markdown(
+    """
+    <div class="big-container">
+    """,
+    unsafe_allow_html=True
+)
 
 st.header("🍓 Your Culinary Assistant 🥕")
+st.title("Recipe Finder")
+st.markdown("Upload an image of a fruit, vegetable, or nut, and we'll find recipes for it!")
+
+uploaded_file = st.file_uploader(
+    "Choose an image...",
+    type=["jpg", "jpeg", "png"]
+)
 
 if uploaded_file is None:
-    st.info("👈 Upload an image in the sidebar to get started!")
+    st.info("Upload an image in the sidebar to get started!")
     st.stop()
 
 col1, col2 = st.columns([0.8, 1])

@@ -2,8 +2,8 @@
 showErrorDetails = false
 
 [theme]
-primaryColor="#00c49a"
-backgroundColor="#0e1117"
-secondaryBackgroundColor="#262730"
-textColor="#fafafa"
-font="sans serif"
+primaryColor = "#c4ff4d"              # bright lemon-lime
+backgroundColor = "#f7ffe5"           # pale yellow-green
+secondaryBackgroundColor = "#e5f7c1"  # soft light green
+textColor = "#2a3b00"                 # dark olive green (high contrast)
+font = "sans serif"
