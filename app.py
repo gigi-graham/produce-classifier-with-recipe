@@ -21,6 +21,7 @@ st.set_page_config(
 # Constants and Mappings
 MODEL_PATH = "resnet50_trained_CV.pth"
 CLASS_NAMES_PATH = "class_names.txt"
+THEMEALDB_API_LOOKUP_URL = "https://www.themealdb.com/api/json/v1/1/lookup.php?i="
 THEMEALDB_API_INGREDIENTS_URL = "https://www.themealdb.com/api/json/v1/1/list.php?i=list"
 THEMEALDB_API_FILTER_URL = "https://www.themealdb.com/api/json/v1/1/filter.php?i="
 
@@ -120,6 +121,19 @@ def fetch_recipes(ingredient):
     except requests.RequestException:
         return None
 
+@st.cache_data
+def fetch_recipe_detail(meal_id):
+    try:
+        response = requests.get(f"{THEMEALDB_API_LOOKUP_URL}{meal_id}")
+        response.raise_for_status()
+        return response.json()["meals"][0]
+    except requests.RequestException:
+        return None
+
+if "selected_meal_id" not in st.session_state:
+    st.session_state.selected_meal_id = None
+
+
 # UI Logic
 local_css("style.css")
 
@@ -151,11 +165,11 @@ section[data-testid="stMain"] {{
     overflow-y: auto !important;
 }}
 
-/* Center horizontally ONLY */
-section[data-testid="stMain"] > div {{
-    display: flex;
-    justify-content: center;
-}}
+# /* Center horizontally ONLY */
+# section[data-testid="stMain"] > div {{
+#     display: flex;
+#     justify-content: center;
+# }}
 
 /* ================= MAIN CONTAINER ================= */
 div[data-testid="stVerticalBlock"] {{
@@ -354,27 +368,110 @@ with col2:
     else:
         st.error(f"Could not find a matching ingredient for `{predicted_class_name}`.")
 
-st.markdown("---")
+st.markdown(" ")
 
 if api_ingredient:
-    st.header(f"🍳 Recipes with {api_ingredient}")
+    # st.header(f"🍳 Recipes with {api_ingredient}")
+    st.markdown("<div class='recipes-spacer'></div>", unsafe_allow_html=True)
+    st.markdown(
+        f"<h2 class='recipes-title'>🍳 Recipes with {api_ingredient}</h2>",
+        unsafe_allow_html=True
+    )
+
     with st.spinner("Searching for recipes..."):
         recipes = fetch_recipes(api_ingredient)
 
+
     if recipes:
         max_recipes_to_show = 12
+
         for i in range(0, min(len(recipes), max_recipes_to_show), 4):
-            cols = st.columns(4)
+            cols = st.columns(4, gap="large")
+
             for j in range(4):
                 if i + j < len(recipes):
                     recipe = recipes[i + j]
+
                     with cols[j]:
-                        st.image(recipe["strMealThumb"])
-                        recipe_url = f"https://www.themealdb.com/meal/{recipe['idMeal']}"
+                        st.markdown("<div class='recipe-card'>", unsafe_allow_html=True)
+
+                        st.image(recipe["strMealThumb"], use_column_width=True)
+
+                        
+
+                        # if st.button(
+                        #     "View recipe",
+                        #     key=f"meal_{recipe['idMeal']}"
+                        # ):
+                        #     st.session_state.selected_meal_id = recipe["idMeal"]
+
                         st.markdown(
-                            f"**[{recipe['strMeal']}]({recipe_url})**",
+                            f"<div class='recipe-title'>{recipe['strMeal']}</div>",
                             unsafe_allow_html=True
                         )
+
+                        if st.button(
+                            "View recipe",
+                            key=f"meal_{recipe['idMeal']}"
+                        ):
+                            st.session_state.selected_meal_id = recipe["idMeal"]
+
+
+                        st.markdown("</div>", unsafe_allow_html=True)
+
+
+    # if st.session_state.selected_meal_id:
+    #     st.markdown("---")
+    # st.header("🍽️ Recipe Details")
+
+    # detail = fetch_recipe_detail(st.session_state.selected_meal_id)
+
+    # if detail:
+    #     st.subheader(detail["strMeal"])
+    #     st.image(detail["strMealThumb"], width=420)
+
+    #     st.markdown("### 🧂 Ingredients")
+    #     ingredients = []
+    #     for i in range(1, 21):
+    #         ing = detail.get(f"strIngredient{i}")
+    #         meas = detail.get(f"strMeasure{i}")
+    #         if ing and ing.strip():
+    #             ingredients.append(f"- {meas} {ing}")
+
+    #     st.markdown("\n".join(ingredients))
+
+    #     st.markdown("### 📖 Instructions")
+    #     st.write(detail["strInstructions"])
+
+
+
+    if st.session_state.selected_meal_id:
+        st.markdown(" ")
+        with st.container():
+            st.header("🍽️ Recipe Details")
+
+
+        detail = fetch_recipe_detail(st.session_state.selected_meal_id)
+
+        if detail:
+            st.subheader(detail["strMeal"])
+            st.image(detail["strMealThumb"], width=420)
+
+            st.markdown("### 🧂 Ingredients")
+            ingredients = []
+            for i in range(1, 21):
+                ing = detail.get(f"strIngredient{i}")
+                meas = detail.get(f"strMeasure{i}")
+                if ing and ing.strip():
+                    ingredients.append(f"- {meas} {ing}")
+
+            st.markdown("\n".join(ingredients))
+
+            st.markdown("### 📖 Instructions")
+            st.write(detail["strInstructions"])
+
+
+    
     else:
         st.warning(
             f"No cooking recipes found for `{predicted_class_name}`.\n"
