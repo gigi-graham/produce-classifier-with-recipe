@@ -1,10 +1,11 @@
 /* Add a border and rounded corners to containers */
-[data-testid="stVerticalBlock"] > [style*="flex-direction: column;"] > [data-testid="stVerticalBlock"] {
+/* [data-testid="stVerticalBlock"] > [style*="flex-direction: column;"] > [data-testid="stVerticalBlock"] {
     border: 1px solid rgba(250, 250, 250, 0.2);
     border-radius: 0.5rem;
     padding: 1rem;
     margin-bottom: 1rem;
-}
+} */
+
 
 /* Make links a bit more prominent */
 a {
@@ -32,6 +33,120 @@ html, body, [data-testid="stAppViewContainer"] {
     z-index: 0;
 }
 
+[data-testid="stContainer"] {
+    margin-top: 3rem;
+}
+
+
 [data-testid="stHeader"], .st-emotion-cache-18ni7ap {
     background-color: rgba(255, 255, 255, 0.0) !important;
 }
+
+.recipe-card button {
+    font-size: 1.15rem !important;
+    padding: 0.5rem 0.8rem !important;
+    min-height: unset !important;
+    line-height: 1.3;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
+}
+
+
+
+/* .recipe-card {
+    height: 340px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 1rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 10px 26px rgba(0,0,0,0.12);
+} */
+
+.recipe-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+
+    padding: 1rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+
+    height: auto;
+    min-height: unset; 
+}
+
+/* Limit card height to avoid very tall cards and keep consistent layout */
+.recipe-card {
+    max-height: 320px;
+    overflow: hidden;
+    align-items: flex-start;
+}
+
+
+
+/* .recipe-card img {
+    height: 180px;
+    object-fit: cover;
+    border-radius: 14px;
+} */
+
+.recipe-card img {
+    width: 100%;
+    height: 140px;         
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* Prevent breaking words inside recipe cards (titles/buttons/labels) */
+/* .recipe-card, .recipe-card * {
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
+} */
+
+
+.recipe-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.35;
+
+   
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+
+    text-align: center;
+
+    max-height: 2.7em;      /* maksimal 2 baris */
+    overflow: hidden;
+
+    margin: 0.4rem 0 0.6rem 0;
+}
+
+.recipes-spacer {
+    height: 3.5rem;
+}
+
+.recipes-title {
+    margin: 0 0 2.5rem 0;
+    font-size: 2.6rem;
+    line-height: 1.2;
+
+    position: relative;  
+    z-index: 2;
+}
+
+
+.recipe-details {
+    background: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
